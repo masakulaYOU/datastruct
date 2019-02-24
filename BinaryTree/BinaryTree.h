@@ -22,7 +22,14 @@ protected:
     void Traverse(BinTreeNode<T>* subTree, std::ostream& os);   //前序遍历输出
     void destory(BinTreeNode<T>*& subTree); // 删除
     bool isEmpty(){ return (root == NULL) ? true : false; } //判树空
-    int Height() { return Height(root);}
+    int Height(BinTreeNode<T>* subTree) const;  // 返回树高度
+    int Size(BinTreeNode<T>* subTree) const;    //结点总数
+    void preOrder(void (* visit)(BinTreeNode<T>* p))
+        { preOrder(root, visit); }   //前序遍历
+    void inOrder(void (* visit)(BinTreeNode<T>* p))
+        { inOrder(root, visit); }   // 中序遍历
+    void postOrder(void (* visit)(BinTreeNode<T>* p))
+        { postOrder(root, visit); }
     friend std::istream& operator >> <> (std::istream& in, BinaryTree& Tree);
     friend std::ostream& operator << <> (std::ostream& os, BinaryTree& Tree);
 public:
@@ -30,7 +37,11 @@ public:
     BinaryTree(T value): RefValue(value), root(NULL){}
     //BinaryTree(BinaryTree<T>& s);   // 复制构造函数
     ~BinaryTree(){destory(root);}   // 析构函数
-    //int Height(BinTreeNode<T>*& subTree);  // 返回树高度
+    int height() const { return Height(root);}
+    int size() const {return Size(root);}
+    void preOrder(BinTreeNode<T>& subTree, void (* visit)(BinTreeNode<T>* p));   // 前序遍历
+    void inOrder(BinTreeNode<T>& subTree, void (* visit)(BinTreeNode<T>* p));   // 中序遍历
+    void postOrder(BinTreeNode<T>& subTree, void (* visit)(BinTreeNode<T>* p)); // 后序遍历
 };
 
 // 复制构造函数
@@ -121,18 +132,63 @@ void BinaryTree<T>::CreateBinNode(std::istream& in, BinTreeNode<T>*& subTree, T 
     }
     return;
 }
-/*
+
 // 求树的高度
 template <class T>
-int BinaryTree<T>::Height(BinTreeNode<T>*& subTree)
+int BinaryTree<T>::Height(BinTreeNode<T>* subTree) const
 {
-    int depth = 0;  // 当前深度
-
+    if(subTree == NULL) return 0;
+    int i = Height(subTree->leftChild);
+    int j = Height(subTree->rightChild);
+    return (i < j) ? j + 1 : i + 1;
 }
-*/
 
 
 
+// 前序遍历
+template <class T>
+void BinaryTree<T>::preOrder(BinTreeNode<T>& subTree, void (* visit)(BinTreeNode<T>* p))
+{
+    if(subTree != NULL)
+    {
+        visit(subTree);
+        preOrder(subTree->leftChild, visit);
+        preOrder(subTree->rightChild, visit);
+    }
+}
+
+// 中序遍历
+
+template <class T>
+void BinaryTree<T>::inOrder(BinTreeNode<T>& subTree, void (* visit)(BinTreeNode<T>* p))
+{
+    if(subTree != NULL)
+    {
+        inOrder(subTree->leftChild, visit);
+        visit(subTree);
+        inOrder(subTree->rightChild, visit);
+    }
+}
+
+// 后续遍历
+template <class T>
+void BinaryTree<T>::postOrder(BinTreeNode<T>& subTree, void (* visit)(BinTreeNode<T>* p))
+{
+    if (subTree != NULL)
+    {
+        postOrder(subTree->leftChild, visit);
+        postOrder(subTree->rightChild, visit);
+        visit(subTree);
+    }
+}
+
+// 求结点总数
+template <class T>
+int BinaryTree<T>::Size(BinTreeNode<T>* subTree) const
+{
+    if(subTree == NULL) return 0;
+    return 1 + Size(subTree->leftChild) + Size(subTree->rightChild);
+}
 
 
 
