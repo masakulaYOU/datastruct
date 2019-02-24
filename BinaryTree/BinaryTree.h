@@ -17,15 +17,41 @@ class BinaryTree
 protected:
     BinTreeNode<T>* root;
     T RefValue;
-    void CreateBinTree(std::istream& in, BinTreeNode<T>*& subTree, T refValue);
-    void CreateBinNode(std::istream& in, BinTreeNode<T>*& subTree, T refValue, int type);
+    void CreateBinTree(std::istream& in, BinTreeNode<T>*& subTree, T refValue); // 创建树
+    void CreateBinNode(std::istream& in, BinTreeNode<T>*& subTree, T refValue, int type); // 创建结点
     void Traverse(BinTreeNode<T>* subTree, std::ostream& os);   //前序遍历输出
+    void destory(BinTreeNode<T>*& subTree); // 删除
+    bool isEmpty(){ return (root == NULL) ? true : false; } //判树空
+    int Height() { return Height(root);}
     friend std::istream& operator >> <> (std::istream& in, BinaryTree& Tree);
     friend std::ostream& operator << <> (std::ostream& os, BinaryTree& Tree);
 public:
     BinaryTree() : root(NULL){}
     BinaryTree(T value): RefValue(value), root(NULL){}
+    //BinaryTree(BinaryTree<T>& s);   // 复制构造函数
+    ~BinaryTree(){destory(root);}   // 析构函数
+    //int Height(BinTreeNode<T>*& subTree);  // 返回树高度
 };
+
+// 复制构造函数
+//template <class T>
+//BinaryTree<T>::BinaryTree(BinaryTree<T>& s)
+//{
+
+//}
+
+// 删除
+template <class T>
+void BinaryTree<T>::destory(BinTreeNode<T>*& subTree)
+{
+    if(subTree != NULL)
+    {
+        destory(subTree->leftChild);
+        destory(subTree->rightChild);
+        delete subTree;
+    }
+}
+
 
 /*
     前序遍历输出
@@ -64,6 +90,7 @@ void BinaryTree<T>::CreateBinTree(std::istream& in, BinTreeNode<T>*& subTree, T 
     std::cout << "请输入根节点:" << std::endl;
     in >> x;    //输入
     if(x == refValue) return; //结束标记
+    p = new BinTreeNode<T>;
     p->data = x;
     p->leftChild = NULL;
     p->rightChild = NULL;
@@ -83,6 +110,7 @@ void BinaryTree<T>::CreateBinNode(std::istream& in, BinTreeNode<T>*& subTree, T 
     in >> x;
     if(x != refValue)
     {
+        p = new BinTreeNode<T>;
         p->data = x;
         p->leftChild = NULL;
         p->rightChild = NULL;
@@ -93,3 +121,22 @@ void BinaryTree<T>::CreateBinNode(std::istream& in, BinTreeNode<T>*& subTree, T 
     }
     return;
 }
+/*
+// 求树的高度
+template <class T>
+int BinaryTree<T>::Height(BinTreeNode<T>*& subTree)
+{
+    int depth = 0;  // 当前深度
+
+}
+*/
+
+
+
+
+
+
+
+
+
+
